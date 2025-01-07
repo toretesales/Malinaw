@@ -1,0 +1,442 @@
+<Page
+    x:Class="Malinaw.pageConvert"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Malinaw"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Grid>
+        <!--  Define two main columns (left for controls, right for images)  -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <!--  Loading Message and Progress Ring  -->
+        <!--  Left side (controls) with ScrollViewer for content scrolling  -->
+        <ScrollViewer
+            x:Name="scrollControls"
+            Grid.Column="0"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel
+                x:Name="StackControls"
+                Width="420"
+                Padding="10">
+                <!--  Control 0 btnConvert and NoticeCorruptionLink  -->
+                <Grid
+                    Height="56"
+                    Margin="0,0,0,10"
+                    Padding="0"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+
+                    <!--  Added LoadingContainer here with alignment to left  -->
+                    <StackPanel
+                        x:Name="LoadingContainer"
+                        Margin="20,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
+
+                        <ProgressRing
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,8,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            IsActive="True" />
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Text="Working on it..." />
+                    </StackPanel>
+
+                    <!--  Hyperlink Button  -->
+                    <HyperlinkButton
+                        x:Name="NoticeCorruptionLink"
+                        Margin="6,12"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="NoticeCorruptionLink_Click"
+                        FontSize="12"
+                        Visibility="Collapsed">
+                        <HyperlinkButton.Content>
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <!--  Text  -->
+                                <TextBlock VerticalAlignment="Center" Text="My preview appears corrupted" />
+                                <!--  Icon on the right  -->
+                                <FontIcon
+                                    Margin="6,2,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    Glyph="&#xe9ce;" />
+                            </StackPanel>
+                        </HyperlinkButton.Content>
+                    </HyperlinkButton>
+                    <!--  Teaching Tip for displaying info on image corruption  -->
+                    <TeachingTip
+                        x:Name="NoticeTeachingTip"
+                        Title="Don't worry!"
+                        CloseButtonContent="Got it!"
+                        IsLightDismissEnabled="True"
+                        PlacementMargin="0"
+                        Subtitle="This issue is related to downscaling the images to thumbnail size and does not affect the actual conversion process."
+                        Target="{x:Bind NoticeCorruptionLink}">
+                        <TeachingTip.IconSource>
+                            <SymbolIconSource Symbol="BrowsePhotos" />
+                        </TeachingTip.IconSource>
+                    </TeachingTip>
+                    <Button
+                        x:Name="btnConvert"
+                        Margin="0,0,12,0"
+                        HorizontalAlignment="Right"
+                        Click="btnConvert_Click"
+                        IsEnabled="False"
+                        Style="{StaticResource AccentButtonStyle}">
+                        <!--  Disable the button by default  -->
+                        <Button.Content>
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <!--  Shuffle Icon  -->
+                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8B1;" />
+                                <!--  Text  -->
+                                <TextBlock
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="Convert" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
+
+                <Grid
+                    x:Name="gridStatus"
+                    Margin="0,0,0,10"
+                    Padding="20"
+                    Background="{ThemeResource SystemFillColorAttentionBackgroundBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+
+                    <!--  Define row definitions for dynamic layout  -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <!--  First row for status text  -->
+                        <RowDefinition Height="Auto" />
+                        <!--  Second row for status message  -->
+                        <RowDefinition Height="*" />
+                        <!--  Third row takes remaining space for the progress bar  -->
+                    </Grid.RowDefinitions>
+
+                    <!--  Status TextBlock in Row 0  -->
+                    <TextBlock
+                        x:Name="tbStatus"
+                        Grid.Row="0"
+                        Margin="0,0,0,10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Text="Malinaw is Ready" />
+
+                    <!--  Status Message TextBlock in Row 1  -->
+                    <TextBlock
+                        x:Name="tbStatusMessage"
+                        Grid.Row="1"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        FontSize="12"
+                        Text="Add an image then a folder and click Convert."
+                        TextWrapping="Wrap" />
+
+                    <!--  ProgressBar in Row 2, only visible when conversion is in progress  -->
+                    <ProgressBar
+                        x:Name="indProgressBar"
+                        Grid.Row="2"
+                        Width="480"
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
+                        IsIndeterminate="True"
+                        Visibility="Collapsed" />
+                </Grid>
+
+                <Grid
+                    x:Name="stackOptions"
+                    Height="Auto"
+                    Margin="0,0,0,10"
+                    Padding="20"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+
+                    <!--  Define Rows and Columns  -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Format picker  -->
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        HorizontalAlignment="Left"
+                        Text="Convert what?" />
+
+                    <ComboBox
+                        x:Name="cmbFilterWhatFormat"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Width="150"
+                        Margin="0,16,0,0"
+                        HorizontalAlignment="Left"
+                        SelectionChanged="cmbFilterWhatFormat_SelectionChanged">
+                        <ComboBoxItem Content="JPEG" />
+                        <ComboBoxItem Content="PNG" />
+                        <ComboBoxItem Content="TIFF" />
+                        <ComboBoxItem Content="BMP" />
+                        <ComboBoxItem Content="ICO" />
+                        <ComboBoxItem Content="GIF" />
+                        <ComboBoxItem Content="WEBP" />
+                        <ComboBoxItem Content="PDF" />
+                    </ComboBox>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="0, 20"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Text="to" />
+
+                    <ComboBox
+                        x:Name="cmbConvertTo"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Width="150"
+                        Margin="0,16,0,0"
+                        HorizontalAlignment="Right"
+                        SelectionChanged="cmbConvertTo_SelectionChanged"
+                        Text="Hello">
+                        <ComboBoxItem Content="JPEG" />
+                        <ComboBoxItem Content="PNG" />
+                        <ComboBoxItem Content="TIFF" />
+                        <ComboBoxItem Content="BMP" />
+                        <ComboBoxItem Content="ICO" />
+                        <ComboBoxItem Content="GIF" />
+                        <ComboBoxItem Content="WEBP" />
+                        <ComboBoxItem Content="PDF" />
+                    </ComboBox>
+
+                    <!--  ToggleSwitch Visibility Binding  -->
+                    <ToggleSwitch
+                        x:Name="tgDecodeWithJ2P"
+                        Grid.Row="2"
+                        Grid.ColumnSpan="3"
+                        Margin="0,0,0,0"
+                        IsEnabled="False"
+                        OffContent="Remove compression artifacts (Slower)"
+                        OnContent="Remove compression artifacts (Slower)"
+                        Visibility="Collapsed" />
+
+                    <!--  Remove All Images  -->
+                    <Button
+                        x:Name="btnRemoveAllImages"
+                        Grid.Row="3"
+                        Grid.ColumnSpan="3"
+                        Width="354"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Click="btnRemoveAllImages_Click"
+                        Content="Clear Images"
+                        IsEnabled="False" />
+
+                    <!--  Clear Images Confirmation Dialog  -->
+                    <ContentDialog
+                        x:Name="ClearImagesDialog"
+                        Title="Remove All Images?"
+                        CloseButtonText="Cancel"
+                        DefaultButton="Primary"
+                        PrimaryButtonText="Yes, Clear All">
+                        <!--  Add a transition for open/close animations  -->
+                        <ContentDialog.Transitions>
+                            <TransitionCollection>
+                                <PopupThemeTransition />
+                                <!--  Ensures animations for opening and closing  -->
+                            </TransitionCollection>
+                        </ContentDialog.Transitions>
+                        <StackPanel>
+                            <TextBlock
+                                Margin="0,0,0,12"
+                                FontWeight="Normal"
+                                Style="{ThemeResource BaseTextBlockStyle}"
+                                Text="All images will be removed. Do you want to continue?" />
+                        </StackPanel>
+                    </ContentDialog>
+                </Grid>
+
+
+                <!--  Control 1 (Select Images)  -->
+                <Grid
+                    x:Name="stackSelectImage"
+                    Height="156"
+                    Margin="0,0,0,10"
+                    Padding="20"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <!--  Make TextBlock width flexible and enable text wrapping  -->
+                    <TextBlock
+                        x:Name="tbSelectedImages"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Left"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Text="No images selected"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        x:Name="tbPathOrNumber"
+                        Margin="0,0,0,8"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        FontSize="12"
+                        Text="Please select an image" />
+                    <Button
+                        x:Name="btnSelectImages"
+                        Margin="0,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Click="btnSelectImages_Click"
+                        Content="Select Images"
+                        IsEnabled="False" />
+                </Grid>
+
+                <!--  Control 2 (Select Folder)  -->
+
+                <Grid
+                    x:Name="stackSelectFolder"
+                    Height="156"
+                    Padding="20"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+
+                    <StackPanel>
+                        <TextBlock
+                            x:Name="tbSelFolderName"
+                            Margin="0,0,0,10"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Text="No folder selected"
+                            TextWrapping="Wrap" />
+
+                        <TextBlock
+                            x:Name="tbConvertedPath"
+                            FontSize="12"
+                            Text="Please choose a folder" />
+                    </StackPanel>
+
+                    <Button
+                        x:Name="btnSelectFolder"
+                        Margin="0,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Click="btnSelectFolder_Click"
+                        Content="Select Folder" />
+
+                    <HyperlinkButton
+                        x:Name="linkOpenCurrentFolder"
+                        Margin="0,0,112,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Click="linkOpenCurrentFolder_Click"
+                        Content="Open"
+                        FontSize="14"
+                        IsEnabled="False" />
+                </Grid>
+
+
+
+                <StackPanel
+                    x:Name="StackFlagsTroubleshoot"
+                    Height="72"
+                    Margin="0,10"
+                    Padding="20"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="Open Logs" />
+
+                        <HyperlinkButton
+                            x:Name="btnOpenLogs"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="btnOpenLogs_Click"
+                            Content="Open Logs" />
+                    </Grid>
+                </StackPanel>
+
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!--  Right side for images  -->
+        <ScrollViewer
+            Grid.Row="1"
+            Grid.Column="1"
+            Padding="3"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
+            <Grid
+                x:Name="StackImagesGrid"
+                Margin="0,42,12,12"
+                CornerRadius="6">
+                <!--  Define Rows and Columns for Image Grid layout  -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

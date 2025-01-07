@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Malinaw (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Malinaw (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
