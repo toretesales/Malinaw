@@ -18,8 +18,9 @@ This software is more of a case study in building UIs with XAML and WinUI 3, I w
 endorse the recommendation in using this software in a production scenario, please don't.
 
 # Notice
-If you run this application anywhere else except its folder, enabling 'Remove Compression
-Artifacts' may cause the application to crash because Malinaw is unable to find jpeg2png.exe
+DO NOT RUN THIS APPLICATION WITHOUT IT BEING FROM IT'S ORIGIN FOLDER, THE MALINAW FOLDER CONTAINS
+DEPENDENCIES AND PROGRAM FILES THAT MALINAW RELIES ON, INCLUDING Jpeg2png.exe FOR REMOVING COMPRESSION
+ARTIFACTING!!!!
 
 # Features
 
